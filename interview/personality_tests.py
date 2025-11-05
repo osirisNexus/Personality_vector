@@ -254,7 +254,12 @@ def assess(character_aliases, experimenter, questionnaire_results, questionnaire
            questionnaire_metadata, eval_method, language, evaluator_llm, nth_test, agent_llm):
     """
     - 'choose' 방식(단일 숫자 응답)이나 alignment 계산 없이,
+    Without using the “choose” method (single numeric response) or any alignment calculation,
     - 'interview_assess' 로직만 남겨서, 평가자 LLM이 대화 내용을 보고 점수를 산출.
+    Keep only the “interview_assess” logic, where the evaluator LLM reads the conversation and produces a score.
+    “We’re not using the old method where the model picks a number directly (like 1–7), nor any post-hoc alignment metrics. 
+    Instead, we only use the interview_assess approach
+      — where an evaluator model (like GPT-4) looks at the dialogue and decides the score based on that.”
     """
     character_name = character_aliases[0] if character_aliases else "John"
     questionnaire_name = questionnaire_metadata['name']
@@ -272,9 +277,11 @@ def assess(character_aliases, experimenter, questionnaire_results, questionnaire
         error_counts = None
 
     # 응답에서 캐릭터 이름 중복 제거 (원본 유지)
+    #“Clean up responses to remove repeated character names — keep the original behavior.”
     from utils_interview import find_colon_idx
 
     # GPT가 아닌 경우, 각종 문제 유형 체크 (원본 유지)
+    # If the model isn't GPT, run checks for different problem types - same as in the original code
     if not agent_llm.startswith('gpt'):
         from utils_interview import (is_multiround, is_multilanguage,
                            not_into_character, contain_repeation, truncate)
@@ -298,6 +305,7 @@ def assess(character_aliases, experimenter, questionnaire_results, questionnaire
             r['response_open'] = response
 
     # speaker name 제거 (원본 유지)
+    #“Remove the speaker’s name from the text — same as in the original code.”
     for r in questionnaire_results:
         response = r['response_open']
         colon_idx = find_colon_idx(response)
@@ -308,10 +316,16 @@ def assess(character_aliases, experimenter, questionnaire_results, questionnaire
                                   + '」')
 
     # 이제 'choose', 'convert' 방식은 제거하고, 'assess' 로직만 남김
+    # “We’ve removed the ‘choose’ and ‘convert’ approaches, and kept only the ‘assess’ logic.”
     eval_args = eval_method.split('_')
     if len(eval_args) > 1 and eval_args[1] == 'batch':
         # 'interview_assess' 형태
+        # 'interview_assess' mode/type
+        #dims is the list of trait dimensions for the questionnaire
+            #tqdm is for the showing the progress bar
+            #dim stand for dimension
         for dim in tqdm(dims):
+            # Here we have dim_reponses which matches the appropriate personality dim from the question to response
             dim_responses = [r for i, r in enumerate(questionnaire_results)
                              if questionnaire[i]['dimension'] == dim]
 
