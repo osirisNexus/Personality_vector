@@ -15,6 +15,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 import torch
 from datetime import datetime
 import time
+import vessl
 API_KEY = "your key"  # 여기에 OpenAI API 키 입력
 client = OpenAI(api_key=API_KEY)
 

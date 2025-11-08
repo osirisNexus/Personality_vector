@@ -51,6 +51,7 @@ if config.get('proxy', None):
 	openai.proxy = config['proxy']
 
 if config.get('openai_apibase', None):
+	
 	openai.api_base = config['openai_apibase']
 
 if config.get('gemini_apikey', None):
