@@ -235,6 +235,7 @@ def interview(character_agent, questionnaire, experimenter, questionnaire_prompt
 
 ###############################################################################
 # 평가자 LLM이 인터뷰를 바탕으로 점수를 매기는 assess 함수
+#ACTUAL RESPONSE READING HERE
 ###############################################################################
 def split_list(input_list, n=1):
     # 원본 그대로 (interview 시 응답들을 여러 묶음으로 쪼갤 때 사용)
@@ -375,6 +376,8 @@ def assess(character_aliases, experimenter, questionnaire_results, questionnaire
                 user_input = 'Our conversation is as follows:\n' + conversations + '\n'
 
                 # 익명화 처리 (원본 유지, eval_args에서 'anonymous' 확인)
+                #“Perform anonymization — same as in the original code — by checking if ‘anonymous’ is specified in eval_args.”
+                # Here we need to give context of who's who
                 if any('anonymous' in e for e in eval_args):
                     for a in character_aliases:
                         sys_prompt = sys_prompt.replace(a, '<the participant>')
@@ -481,6 +484,7 @@ def assess(character_aliases, experimenter, questionnaire_results, questionnaire
 ###############################################################################
 # personality_assessment
 ###############################################################################
+# loads questionnaire and metadata to then run the interview to answer the quesiton and save it
 def personality_assessment(character, agent_type, agent_llm, questionnaire_name,
                            eval_method, evaluator_llm='gpt-3.5-turbo', repeat_times=1, save_model_name=None):
 
